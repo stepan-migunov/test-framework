@@ -1,6 +1,0 @@
-<!DOCTYPE RCC><RCC version="1.0">
-<qresource prefix="/DBusImageViewer">
-<file alias="main.qml">/home/stepan/QTProjects/DBusImageViewer/main.qml</file>
-<file alias="image_view.qml">/home/stepan/QTProjects/DBusImageViewer/image_view.qml</file>
-</qresource>
-</RCC>
