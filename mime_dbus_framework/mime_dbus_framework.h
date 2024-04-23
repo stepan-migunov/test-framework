@@ -7,6 +7,8 @@
 
 #include <QtDBus/QDBusAbstractAdaptor>
 
+namespace MyFramework
+{
 
 class ApplicationInterface : public QDBusAbstractAdaptor
 {
@@ -41,8 +43,11 @@ public:
     void setActivateAction(activate_action_function_type activate_action) { m_activate_action = activate_action; }
 
     ApplicationInterface(QObject* object = nullptr);
-    bool register_service(const QString& serviceName);
+    bool register_service(const QString& serviceName, const QString& serviceExecutable);
     bool registerObject(const QString& objectPath = "/", QObject* object = nullptr);
+
+
+
     virtual ~ApplicationInterface();
 };
 
@@ -66,14 +71,15 @@ public:
         m_service_name = new_name;
     }
 
-    Q_INVOKABLE void add_type(const QString type, bool write_to_home_user_local = false);
+    Q_INVOKABLE void add_type(const QString& type, const QString& executablePath);
 
 
 signals:
     void onServiceNameChanged();
 private:
     QString m_service_name;
-    QString m_path_to;
 };
+
+}
 
 #endif // MIME_DBUS_FRAMEWORK_H

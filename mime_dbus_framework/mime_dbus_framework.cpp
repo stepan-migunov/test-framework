@@ -9,29 +9,23 @@
 
 #include <QtDBus/QDBusConnection>
 
+using namespace MyFramework;
+
 MimeDBusFramework::MimeDBusFramework()
 {
 }
 
 MimeDBusFramework::MimeDBusFramework(QObject *parent):
     QObject(parent),
-    m_service_name(""),
-    m_path_to(".")
+    m_service_name("")
 {
 
 }
 
-void MimeDBusFramework::add_type(const QString type, bool write_to_home_user_local)
+void MimeDBusFramework::add_type(const QString& type, const QString& executablePath)
 {
-    QString _path_to = ".";
-    if (write_to_home_user_local)
-    {
-        _path_to = qEnvironmentVariable("HOME") + "/.local/share/applications";
-    }
-    else
-    {
-        qWarning() << "Without modifying default desktop entry, changes would not take any effect.";
-    }
+    QString _path_to = qEnvironmentVariable("HOME") + "/.local/share/applications";
+
     if (m_service_name.size() < 1)
     {
         qCritical() << "Could not add type " + type + ": Lack of DBus Service Name.";
@@ -137,48 +131,13 @@ void MimeDBusFramework::add_type(const QString type, bool write_to_home_user_loc
         contents.append(QString("Type=Application"));
         contents.append(QString("MimeType=") + type + QString(";"));
         contents.append(QString("DBusActivatable=true"));
-        contents.append(QString("Exec=") + QCoreApplication::arguments().at(0) + " %F");
+        contents.append(QString("Exec=") + executablePath + " %F");
 
         desktop_entry_file.write(contents.join('\n').toUtf8());
     }
 }
 
-bool ApplicationInterface::register_service(const QString &serviceName)
-{
-    if (serviceName.endsWith(".service"))
-    {
-        m_service_name = serviceName.chopped(QString(".service").length());
-    }
-    else
-    {
-        m_service_name = serviceName;
-    }
-    QFile dbus_service_file(qEnvironmentVariable("HOME") + "/.local/share/dbus-1/services/" + m_service_name + ".service");
-    if (!dbus_service_file.exists())
-    {
-        qWarning() << "Could not find .service, associated with " + serviceName;
-        qWarning() << "I will try to write this file myself, and you should fill in necessary parts.";
-        if(!dbus_service_file.open(QIODevice::OpenModeFlag::NewOnly
-                                | QIODevice::OpenModeFlag::ReadWrite ))
-        {
-            qCritical() << "Could not create DBus Service file";
-            QCoreApplication::exit(4);
-        }
-        dbus_service_file.setPermissions(QFile::Permission::ExeGroup
-                                          | QFile::Permission::ExeOwner
-                                          | QFile::Permission::ExeUser
-                                          | QFile::Permission::ReadOwner
-                                          | QFile::Permission::WriteOwner);
-        QStringList contents;
-        contents.append("[D-BUS Service]");
-        contents.append("Name=" + m_service_name);
-        contents.append("Exec=" + QCoreApplication::arguments().at(0) + " %F");
 
-        dbus_service_file.write(contents.join('\n').toUtf8());
-    }
-    QDBusConnection::sessionBus().registerService(m_service_name);
-    return QDBusConnection::sessionBus().registerService(m_service_name);
-}
 
 bool ApplicationInterface::registerObject(const QString &objectPath, QObject *object)
 {
@@ -217,6 +176,47 @@ ApplicationInterface::ApplicationInterface(QObject *object):
     m_activate = activate_function_type{};
     m_open = open_function_type{};
     m_activate_action = activate_action_function_type{};
+}
+
+bool ApplicationInterface::register_service(const QString &serviceName,
+                                            const QString &serviceExecutable)
+{
+    if (serviceName.endsWith(".service"))
+    {
+        m_service_name = serviceName.chopped(QString(".service").length());
+    }
+    else
+    {
+        m_service_name = serviceName;
+    }
+
+    QFile dbus_service_file(qEnvironmentVariable("HOME") + "/.local/share/dbus-1/services/" + m_service_name + ".service");
+    if (!dbus_service_file.exists())
+    {
+        qWarning() << "Could not find .service, associated with " + serviceName;
+        qWarning() << "I will try to write this file myself, and you should fill in necessary parts.";
+
+        if(!dbus_service_file.open(QIODevice::OpenModeFlag::NewOnly
+                                   | QIODevice::OpenModeFlag::ReadWrite ))
+        {
+            qCritical() << "Could not create DBus Service file";
+            QCoreApplication::exit(4);
+        }
+        dbus_service_file.setPermissions(QFile::Permission::ExeGroup
+                                         | QFile::Permission::ExeOwner
+                                         | QFile::Permission::ExeUser
+                                         | QFile::Permission::ReadOwner
+                                         | QFile::Permission::WriteOwner);
+        QStringList contents;
+        contents.append("[D-BUS Service]");
+        contents.append("Name=" + m_service_name);
+
+        contents.append("Exec=" + serviceExecutable + " %F");
+
+        dbus_service_file.write(contents.join('\n').toUtf8());
+    }
+
+    return QDBusConnection::sessionBus().registerService(m_service_name);
 }
 
 
