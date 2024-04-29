@@ -1,10 +1,10 @@
 QT += quick dbus
 
 SOURCES += \
-        main.cpp
+        main.cpp \
+        settingsprovider.cpp
 
-resources.files = main.qml 
-resources.files += image_view.qml
+resources.files = main.qml
 resources.prefix = /$${TARGET}
 RESOURCES += resources
 
@@ -19,10 +19,12 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-DISTFILES += \
-    image_view.qml
+DISTFILES +=
 
-unix:!macx: LIBS += -L$$PWD/../build-mime_dbus_framework-Desktop_Qt_6_2_4_GCC_64bit-Debug/ -lmime_dbus_framework
+unix:!macx: LIBS += -L$$PWD/../build-framework/ -lmime_dbus_framework
 
 INCLUDEPATH += $$PWD/../mime_dbus_framework
 DEPENDPATH += $$PWD/../mime_dbus_framework
+
+HEADERS += \
+    settingsprovider.h
