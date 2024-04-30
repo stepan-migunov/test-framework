@@ -11,8 +11,8 @@ viewer:
 clean:
 	rm -rf build-framework build-viewer
 files: 
-	if ! ls ${HOME}/.local 2>&1 1>/dev/null; then; else mkdir ${HOME}/.local; fi;
-	if ! ls ${HOME}/.local/share 2>&1 1>/dev/null; then; else mkdir ${HOME}/.local/share; fi;
-	if ! ls ${HOME}/.local/share/applications 2>&1 1>/dev/null; then mkdir ${HOME}/.local/share/applications; fi;
-	if ! ls ${HOME}/.local/share/dbus-1 2>&1 1>/dev/null; then mkdir ${HOME}/.local/share/dbus-1; fi;
-	if ! ls ${HOME}/.local/share/dbus-1/services 2>&1 1>/dev/null; then mkdir ${HOME}/.local/share/dbus-1/services; fi;
+	if ! ls ${HOME}/.local 1>/dev/null 2>&1; then mkdir ${HOME}/.local; fi;
+	if ! ls ${HOME}/.local/share 1>/dev/null 2>&1; then mkdir ${HOME}/.local/share; fi;
+	if ! ls ${HOME}/.local/share/applications 1>/dev/null 2>&1; then mkdir ${HOME}/.local/share/applications; fi;
+	if ! ls ${HOME}/.local/share/dbus-1 1>/dev/null 2>&1; then mkdir ${HOME}/.local/share/dbus-1; fi;
+	if ! ls ${HOME}/.local/share/dbus-1/services 1>/dev/null 2>&1; then mkdir ${HOME}/.local/share/dbus-1/services; fi;
