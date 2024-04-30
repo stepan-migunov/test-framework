@@ -1,9 +1,8 @@
-Run under QtCreator, otherwise it could not load necessary enironment variables. 
-Project "mime_dbus_framework" is required in image_viewer.pro. 
-Therefore, you need to check if LIBS and INCLUDEPATH are referring to appropriate directories.
-Possble launching pattern is:
-1. Clone repo
-2. Build mime_dbus_framework
-3. Satisfy dependencies by modifying LIBS, INCLUDEPATH and DEPENDPATH
-4. Build image_viewer
-5. Run it in Debug mode
+1. #Install necessary packages:
+  sudo apt update
+  sudo apt install make g++ qt6-base-dev qml-qt6 qt6-declarative-dev qt6-wayland qml6-module-qtqml-workerscript qml6-module-qtquick qml6-module-qtquick-controls qml6-module-qtquick-layouts qml6-module-qtquick-templates
+2. cd ~
+3. git clone https://github.com/stepan-migunov/test-framework
+4. cd ./test-framework
+5. make
+6. ./build-viewer/image_viewer
